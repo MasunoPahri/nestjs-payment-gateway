@@ -5,10 +5,12 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { UserBalanceController } from './user-balance/user-balance.controller';
 import { UserBalanceService } from './user-balance/user-balance.service';
+import { MoneyTransferController } from './money-transfer/money-transfer.controller';
+import { MoneyTransferService } from './money-transfer/money-transfer.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), HttpModule],
-  controllers: [AppController, UserBalanceController],
-  providers: [AppService, UserBalanceService],
+  controllers: [AppController, UserBalanceController, MoneyTransferController],
+  providers: [AppService, UserBalanceService, MoneyTransferService],
 })
 export class AppModule {}
