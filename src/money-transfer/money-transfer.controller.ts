@@ -7,7 +7,7 @@ export class MoneyTransferController {
 
     @Post('create-new')
     createNew(): any {
-        const response = this.moneyTransferService.transfer();
+        const response = this.moneyTransferService.createDisburse();
 
         return response;
     }

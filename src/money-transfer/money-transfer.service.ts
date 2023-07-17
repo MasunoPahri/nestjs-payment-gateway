@@ -7,7 +7,7 @@ import { map, catchError, firstValueFrom } from 'rxjs';
 export class MoneyTransferService {
     constructor(private httpService: HttpService) {}
 
-    async transfer() {
+    async createDisburse() {
         const privateKey = process.env.FLIP_SECRET;
         const encodeKey  = btoa(privateKey + ':');
         const date       = new Date();
