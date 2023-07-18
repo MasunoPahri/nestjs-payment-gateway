@@ -32,21 +32,35 @@ export class MoneyTransferService {
         return data;
     }
 
-    async fetchDisburse() {
-        const headers = HEADERS;
+    private isEmpty(str): boolean {
+      return (!str || str.length === 0 );
+    }
 
-        const { data } = await firstValueFrom(this.httpService
-          .get('https://bigflip.id/big_sandbox_api/v3/disbursement', {headers: headers})
-          .pipe(
-            map((res) => res),
-          )
-          .pipe(
-            catchError((err) => {
-              throw new ForbiddenException(err);
-          }),
-        ));
-        
-        return data;
+    async fetchDisburse(queryParam) {
+      let endpoint: string = '';
+      let params: string = ''; 
+      const headers = HEADERS;
+      
+      endpoint = "https://bigflip.id/big_sandbox_api/v3/disbursement";
+      if (!this.isEmpty(queryParam.pagination) ||
+          !this.isEmpty(queryParam.page) ||
+          !this.isEmpty(queryParam.sort)) {
+          params   = '?pagination=' + queryParam.pagination + '&page=' + queryParam.page + '&sort=' + queryParam.sort;
+          endpoint = "https://bigflip.id/big_sandbox_api/v3/disbursement" + params;
+      }
+
+      const { data } = await firstValueFrom(this.httpService
+        .get(endpoint, {headers: headers})
+        .pipe(
+          map((res) => res),
+        )
+        .pipe(
+          catchError((err) => {
+            throw new ForbiddenException(err);
+        }),
+      ));
+      
+      return data;
     }
 }
 

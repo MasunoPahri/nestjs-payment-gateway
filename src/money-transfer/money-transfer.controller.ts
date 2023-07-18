@@ -1,4 +1,4 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { MoneyTransferService } from './money-transfer.service';
 
 @Controller('api/v1/money-transfer')
@@ -12,8 +12,8 @@ export class MoneyTransferController {
     }
 
     @Get('list')
-    fetchList(): any {
-        const response = this.moneyTransferService.fetchDisburse();
+    fetchList(@Query() queryParam): any {
+        const response = this.moneyTransferService.fetchDisburse(queryParam);
         return response;
     }
 }

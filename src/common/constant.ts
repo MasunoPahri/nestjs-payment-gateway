@@ -12,7 +12,7 @@ const timestamp  = date.getFullYear() +
     
 export const HEADERS = {
     'Content-Type': 'application/x-www-form-urlencoded',
-    'idempotency-key': 'idem-key-1',
+    'idempotency-key': 'idem-key-2',
     'Authorization': `Basic ${encodeKey}`,
     'X-TIMESTAMP': `${timestamp}`
 };
