@@ -1,5 +1,9 @@
 require('dotenv').config();
 
+const BASEURL = "https://bigflip.id/big_sandbox_api/v3";
+export const DISBURSEMENT_BASEURL = BASEURL + "/disbursement";
+export const DISBURSE_BASEURL = BASEURL + "/get-disbursement";
+
 const privateKey = process.env.FLIP_SECRET;
 const encodeKey  = btoa(privateKey + ':');
 const date       = new Date();
