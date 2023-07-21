@@ -8,7 +8,6 @@ export class UserBalanceController {
     @Get('get-balance')
     getBalance(): any {
       const response = this.userBalanceService.getBalance();
-      // console.log(response);
       return response;
     }
 }

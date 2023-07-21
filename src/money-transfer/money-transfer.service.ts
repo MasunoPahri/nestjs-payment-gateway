@@ -1,23 +1,34 @@
 import { HttpService } from '@nestjs/axios';
 import { ForbiddenException, HttpException, Injectable } from '@nestjs/common';
+import { createHmac } from 'crypto';
 import { map, catchError, firstValueFrom } from 'rxjs';
-import { DISBURSEMENT_BASEURL, DISBURSE_BASEURL, HEADERS } from 'src/common/constant';
+import { DISBURSEMENT_BASEURL, DISBURSE_BASEURL, HASHED_SECRET_STRING, HEADERS } from 'src/common/constant';
+import { commonFunctions } from 'src/common/function';
 
 @Injectable()
 export class MoneyTransferService {
     constructor(
-      private httpService: HttpService
+      private httpService: HttpService,
+      private commonFunction: commonFunctions
     ) {}
 
-    async createDisburse() {
+    async createDisburse(body) {
         const bodyReq = {
-            'account_number': '1122333300',
-            'bank_code': 'bni',
-            'amount': '10000',
-            'remark': 'some remark',
-            'recipient_city': '391',
-            'beneficiary_email': 'test@mail.com,user@mail.com'
+            'account_number': body.account_number,
+            'bank_code': body.bank_code,
+            'amount': body.amount,
+            'remark': body.remark,
+            'recipient_city': body.recipient_city,
+            'beneficiary_email': body.beneficiary_email,
         }
+
+        // This string used for idempotency-key
+        const hashedBody = createHmac('md5', HASHED_SECRET_STRING)
+          .update(JSON.stringify(bodyReq))
+          .digest('hex');
+
+        // Overried idempotency-key value;
+        HEADERS['idempotency-key'] = hashedBody;
 
         const { data } = await firstValueFrom(this.httpService
           .post('https://bigflip.id/big_sandbox_api/v3/disbursement', bodyReq, {headers: HEADERS})
@@ -33,18 +44,14 @@ export class MoneyTransferService {
         return data;
     }
 
-    private isEmpty(str): boolean {
-      return (!str || str.length === 0 );
-    }
-
     async fetchDisburse(queryParam) {
       let endpoint: string = '';
       let params: string = '';
       
       endpoint = DISBURSEMENT_BASEURL;
-      if (!this.isEmpty(queryParam.pagination) ||
-          !this.isEmpty(queryParam.page) ||
-          !this.isEmpty(queryParam.sort)) {
+      if (!this.commonFunction.isEmpty(queryParam.pagination) ||
+          !this.commonFunction.isEmpty(queryParam.page) ||
+          !this.commonFunction.isEmpty(queryParam.sort)) {
           params   = '?pagination=' + queryParam.pagination + '&page=' + queryParam.page + '&sort=' + queryParam.sort;
           endpoint = DISBURSEMENT_BASEURL + params;
       }
@@ -67,12 +74,12 @@ export class MoneyTransferService {
       let params: string = ''; 
       let endpoint: string = DISBURSE_BASEURL;
       
-      if (!this.isEmpty(queryParam.idempotencyKey)) {
+      if (!this.commonFunction.isEmpty(queryParam.idempotencyKey)) {
           params   = '?idempotency-key=' + queryParam.idempotencyKey;
           endpoint = DISBURSE_BASEURL + params;
       }
       
-      if (!this.isEmpty(queryParam.id)) {
+      if (!this.commonFunction.isEmpty(queryParam.id)) {
           params   = '?id=' + queryParam.id;
           endpoint = DISBURSE_BASEURL + params;
       }
