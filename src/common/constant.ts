@@ -8,9 +8,14 @@ export const HASHED_SECRET_STRING = "thisissecretstring";
 const privateKey = process.env.FLIP_SECRET;
 const encodeKey  = btoa(privateKey + ':');
 const date       = new Date();
-const timestamp  = date.getFullYear() +
-    '-' + (date.getMonth()+1) +
-    '-' + date.getDate() +
+
+var d = date.getDate();
+var m = date.getMonth() + 1; //Month from 0 to 11
+var y = date.getFullYear();
+
+const timestamp  = y +
+    '-' + (m<=9 ? '0' + m : m) +
+    '-' + (d <= 9 ? '0' + d : d) +
     'T' + date.getHours() +
     ':' + date.getMinutes() +
     ':' + date.getSeconds() + date.getTimezoneOffset();

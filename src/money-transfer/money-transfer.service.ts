@@ -27,6 +27,7 @@ export class MoneyTransferService {
           .update(JSON.stringify(bodyReq))
           .digest('hex');
 
+          console.log(HEADERS);
         // Overried idempotency-key value;
         HEADERS['idempotency-key'] = hashedBody;
 
@@ -37,6 +38,8 @@ export class MoneyTransferService {
           )
           .pipe(
             catchError((err) => {
+              const errorMsg = err.response.data.errors[0].message;
+              console.log(errorMsg);
               throw new ForbiddenException(err);
           }),
         ));
